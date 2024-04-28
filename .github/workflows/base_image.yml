@@ -2,16 +2,35 @@ name: base-image
 on:
   push:
     branches: [ main, dev ]
-    paths:
-      - 'deployment/base.dockerfile'
+#    paths:
+#      - 'deployment/base.dockerfile'
 
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: beketon/testr-base
 
 jobs:
+
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      base_image: ${{ steps.changes.outputs.src }}
+      python_base_image: ${{ steps.changes.outputs.infra }}
+    steps:
+    - uses: actions/checkout@v3
+    - uses: dorny/paths-filter@v2
+      id: changes
+      with:
+        filters: |
+          base_image:
+            - 'deployment/base_image/**'
+          python_base_image:
+            - 'deployment/python_base_image/**'
+
   push_to_registry:
     name: Push Docker image to Docker Hub
+    needs: changes
+    if: ${{ needs.changes.outputs.base_image == 'true' }}
     runs-on: ubuntu-latest
 
     permissions:
@@ -19,6 +38,14 @@ jobs:
       packages: write
 
     steps:
+      - name: Check out the repo
+        uses: dorny/paths-filter@v3
+        id: changes
+        with:
+          filters: |
+            src:
+              - 'src/**'
+
       - name: Check out the repo
         uses: actions/checkout@v3
       
