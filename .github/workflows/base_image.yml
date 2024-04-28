@@ -3,7 +3,7 @@ on:
   push:
     branches: [ main, dev ]
     paths:
-      - './deployment/base.dockerfile'
+      - 'deployment/base.dockerfile'
 
 env:
   REGISTRY: ghcr.io
