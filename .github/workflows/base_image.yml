@@ -7,7 +7,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: beketon/testactions-base
+  IMAGE_NAME: beketon/testr-base
 
 jobs:
   push_to_registry:
