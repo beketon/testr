@@ -16,8 +16,8 @@ jobs:
   changes:
     runs-on: ubuntu-latest
     outputs:
-      base_image: ${{ steps.changes.outputs.src }}
-      python_base_image: ${{ steps.changes.outputs.infra }}
+      base_image: ${{ steps.changes.outputs.base_image }}
+      python_base_image: ${{ steps.changes.outputs.python_base_image }}
     steps:
     - uses: actions/checkout@v3
     - uses: dorny/paths-filter@v2
@@ -42,13 +42,6 @@ jobs:
       packages: write
 
     steps:
-      - name: Check out the repo
-        uses: dorny/paths-filter@v3
-        id: changes
-        with:
-          filters: |
-            src:
-              - 'src/**'
 
       - name: Check out the repo
         uses: actions/checkout@v3
@@ -77,7 +70,7 @@ jobs:
 
   push_python_base_image:
     name: Push python base image with libreOffice to github registry
-    needs: changes
+    needs: push_base_image
     if: ${{ needs.changes.outputs.python_base_image == 'true' }}
     runs-on: ubuntu-latest
 
@@ -86,13 +79,6 @@ jobs:
       packages: write
 
     steps:
-      - name: Check out the repo
-        uses: dorny/paths-filter@v3
-        id: changes
-        with:
-          filters: |
-            src:
-              - 'src/**'
 
       - name: Check out the repo
         uses: actions/checkout@v3
