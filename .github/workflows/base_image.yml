@@ -110,3 +110,45 @@ jobs:
             "BASE_IMAGE=${{ env.REGISTRY }}/${{ env.BASE_IMAGE_NAME}}:${{ env.BRANCH_NAME}}"
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+
+  push_app_image:
+    name: Push app image github registry
+    needs: [changes, push_base_image, push_python_base_image]
+    if: |
+      always() &&
+      (needs.push_base_image.result == 'success' || needs.push_base_image.result == 'skipped') &&
+      (needs.push_python_base_image.result == 'success' || needs.push_python_base_image.result == 'skipped')
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+
+      - name: Check out the repo
+        uses: actions/checkout@v3
+      
+      - name: Log in to the Container registry
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.APP_IMAGE_NAME }}
+      
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          file: ./deployment/app_image/dockerfile
+          push: true
+          build-args: |
+            "BASE_IMAGE=${{ env.REGISTRY }}/${{ env.PYTHON_IMAGE_NAME}}:${{ env.BRANCH_NAME}}"
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
