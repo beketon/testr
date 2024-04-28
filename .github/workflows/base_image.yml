@@ -27,8 +27,8 @@ jobs:
           python_base_image:
             - 'deployment/python_base_image/**'
 
-  push_to_registry:
-    name: Push Docker image to Docker Hub
+  push_base_image:
+    name: Push base image with libreOffice to github registry
     needs: changes
     if: ${{ needs.changes.outputs.base_image == 'true' }}
     runs-on: ubuntu-latest
