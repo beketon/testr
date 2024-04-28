@@ -1,9 +1,6 @@
 ARG IMAGE_TAG=latest
 FROM ghcr.io/beketon/testactions-base:$IMAGE_TAG
 
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONUNBUFFERED 1
-
 RUN apt-get update && apt-get --no-install-recommends install libreoffice -y && \
     apt-get install -y libreoffice-java-common \
     && apt-get clean
