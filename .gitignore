@@ -1,0 +1,11 @@
+.DS_Store
+.env
+venv
+__pycache__
+**/__pycache__/
+.vscode
+access_log
+error_log
+.venv
+logs
+gunicorn_start
