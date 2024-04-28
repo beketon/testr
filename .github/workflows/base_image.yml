@@ -29,6 +29,7 @@ jobs:
           python_base_image:
             - 'deployment/python_base_image/**'
             - 'requirements.txt'
+            - 'deployment/base_image/**'
 
   push_base_image:
     name: Push base image with libreOffice to github registry
