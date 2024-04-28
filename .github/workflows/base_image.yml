@@ -70,7 +70,7 @@ jobs:
 
   push_python_base_image:
     name: Push python base image with libreOffice to github registry
-    needs: push_base_image
+    needs: [changes, push_base_image]
     if: ${{ needs.changes.outputs.python_base_image == 'true' }}
     runs-on: ubuntu-latest
 
