@@ -2,8 +2,6 @@ name: base-image
 on:
   push:
     branches: [ main, dev ]
-    paths:
-      - 'deployment/base.dockerfile'
 
 env:
   REGISTRY: ghcr.io
