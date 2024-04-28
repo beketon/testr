@@ -8,8 +8,8 @@ on:
 env:
   REGISTRY: ghcr.io
   BASE_IMAGE_NAME: beketon/testr-base
-  PYTHON_IMAGE_NAME: beketon/testr-base
-  APP_IMAGE_NAME: beketon/testr-base
+  PYTHON_IMAGE_NAME: beketon/testr-base-python
+  APP_IMAGE_NAME: beketon/testr
   BRANCH_NAME: ${{ github.head_ref || github.ref_name }} 
 
 jobs:
@@ -107,6 +107,6 @@ jobs:
           file: ./deployment/python_base_image/dockerfile
           push: true
           build-args: |
-            "IMAGE_TAG=${{ env.BRANCH_NAME}}"
+            "BASE_IMAGE=${{ env.REGISTRY }}/${{ env.BASE_IMAGE_NAME}}:${{ env.BRANCH_NAME}}"
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
