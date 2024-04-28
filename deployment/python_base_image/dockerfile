@@ -1,5 +1,5 @@
-ARG image-tag=latest
-FROM ghcr.io/beketon/testactions-base:$image-tag
+ARG IMAGE_TAG=latest
+FROM ghcr.io/beketon/testactions-base:$IMAGE_TAG
 
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1

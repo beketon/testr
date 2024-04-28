@@ -7,7 +7,9 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: beketon/testr-base
+  BASE_IMAGE_NAME: beketon/testr-base
+  PYTHON_IMAGE_NAME: beketon/testr-base
+  APP_IMAGE_NAME: beketon/testr-base
 
 jobs:
 
@@ -26,6 +28,7 @@ jobs:
             - 'deployment/base_image/**'
           python_base_image:
             - 'deployment/python_base_image/**'
+            - 'requirements.txt'
 
   push_base_image:
     name: Push base image with libreOffice to github registry
@@ -60,13 +63,59 @@ jobs:
         id: meta
         uses: docker/metadata-action@v4
         with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          images: ${{ env.REGISTRY }}/${{ env.BASE_IMAGE_NAME }}
       
       - name: Build and push Docker image
         uses: docker/build-push-action@v3
         with:
           context: .
-          file: ./deployment/base.dockerfile
+          file: ./deployment/base_image/dockerfile
           push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+  push_python_base_image:
+    name: Push python base image with libreOffice to github registry
+    needs: changes
+    if: ${{ needs.changes.outputs.python_base_image == 'true' }}
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Check out the repo
+        uses: dorny/paths-filter@v3
+        id: changes
+        with:
+          filters: |
+            src:
+              - 'src/**'
+
+      - name: Check out the repo
+        uses: actions/checkout@v3
+      
+      - name: Log in to the Container registry
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.PYTHON_IMAGE_NAME }}
+      
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          file: ./deployment/python_base_image/dockerfile
+          push: true
+          build-args: |
+            "IMAGE_TAG=${{ github.ref}}"
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
