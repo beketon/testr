@@ -10,7 +10,7 @@ ARG GID=1001
 RUN addgroup --gid "${GID}" --system app && \
     adduser --no-create-home --shell /bin/false --disabled-password --uid "${UID}" --system --group app
 
-COPY ./deployment/entrypoint.sh /entrypoint.sh
+COPY ./deployment/app_image/entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
 COPY --chown=app:app . /app
